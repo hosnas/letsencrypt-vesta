@@ -29,7 +29,7 @@
 #(arguments shouldn't be necessary if using /etc/letsencrypt/cli.ini)
 #The -m (mail) and -d (domain) options will be added automatically
 LETSENCRYPT_COMMAND='/usr/local/certbot/certbot-auto 
-    -t --renew-by-default --agree-tos --webroot -w /etc/letsencrypt/webroot
+    -t --renew-by-default --agree-tos --no-self-upgrade --webroot -w /etc/letsencrypt/webroot
     --server https://acme-v01.api.letsencrypt.org/directory'
 
 #Set the path to Vesta's installation base
@@ -254,8 +254,8 @@ do
         cp /etc/letsencrypt/live/$MAINDOMAIN/chain.pem $TMPLOC/$DOMAIN.ca
 
         #Check if the site already has a cert
-        HAS_CERT=`$VESTA_PATH/bin/v-get-web-domain-value $USER $DOMAIN SSL`
-        if [[ $HAS_CERT == 'no' ]]
+        HAS_CERT=`$VESTA_PATH/bin/v-list-web-domain-ssl $USER $DOMAIN`
+        if [[ $HAS_CERT == '' ]]
         then
             #Configure SSL and install the cert
             $VESTA_PATH/bin/v-add-web-domain-ssl $USER $DOMAIN $TMPLOC
@@ -308,4 +308,3 @@ then
         echo "Renewal scheduled for $RENEWALDAYS days."
     fi
 fi
-
